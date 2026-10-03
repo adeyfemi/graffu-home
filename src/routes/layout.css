@@ -1,0 +1,84 @@
+@import './brand.css';
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* ── Base reset & defaults ────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	font-family: var(--font-serif);
+	line-height: 1.65;
+	margin: 0;
+	padding-top: var(--nav-height);
+}
+
+code, kbd, samp, pre {
+	font-size: 0.9em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-display);
+	line-height: 1.1;
+	margin: 0 0 0.5em;
+}
+
+nav, [role="navigation"] {
+	font-family: var(--font-display);
+}
+
+[data-legend], .legend {
+	font-family: var(--font-display);
+}
+
+.story-eyebrow, [data-eyebrow] {
+	font-family: var(--font-display);
+}
+
+.story-meta, [data-metadata] {
+	font-family: var(--font-display);
+}
+
+.step-title,
+figcaption,
+.legend-item {
+	font-family: var(--font-display);
+}
+
+p {
+	font-size: 1rem;
+	margin: 0 0 1.25em;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+a {
+	color: inherit;
+}
+
+img, svg, video {
+	display: block;
+	max-width: 100%;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+/* Honor the OS "reduce motion" setting: near-instant CSS transitions/animations.
+   JS-driven map-zoom tweens are gated separately in story/+page.svelte. */
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
