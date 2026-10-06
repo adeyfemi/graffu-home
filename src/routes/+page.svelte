@@ -3,16 +3,13 @@
 	import type { Pathname } from '$app/types';
 	import { SITE_URL } from '$lib/constants.js';
 	import stories from '../data/stories.json';
+	import { screenshotFor } from './screenshots';
 
-	// The sheet's `image` column is a filename in $lib/assets/story-screenshots, or a full URL.
-	const screenshots = import.meta.glob<string>('$lib/assets/story-screenshots/*', {
-		eager: true,
-		import: 'default'
-	});
+	let { data } = $props();
 
-	function imageFor(image: string): string | undefined {
-		if (/^https?:\/\//.test(image)) return image;
-		return screenshots[`/src/lib/assets/story-screenshots/${image}`];
+	// Prefer the sheet's image; otherwise use the linked page's og:image, fetched at build time.
+	function imageFor(story: (typeof stories)[number]): string | undefined {
+		return screenshotFor(story.image) ?? data.fallbackImages[story.url];
 	}
 
 	// Site-relative URLs ("/club-vs-country") get the base path; anything else is left as-is.
@@ -59,7 +56,7 @@
 <div class="snap-container">
 
 	{#each stories as story, i (story.url)}
-		{@const img = imageFor(story.image)}
+		{@const img = imageFor(story)}
 		<div class="page page--story">
 			<!-- URLs come from the stories sheet and may point off-site -->
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
