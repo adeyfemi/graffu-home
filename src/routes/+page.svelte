@@ -52,9 +52,9 @@
 			<li>
 				<!-- URLs come from the stories sheet and may point off-site -->
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={hrefFor(story.url)} class="story-link">
-					<span class="story-link__title">{story.title}</span>
-					<span class="story-link__dek">{story.subtitle}</span>
+				<a href={hrefFor(story.url)} class="story-card">
+					<span class="story-card__title">{story.title}</span>
+					<span class="story-card__dek">{story.subtitle}</span>
 				</a>
 			</li>
 		{/each}
@@ -75,36 +75,49 @@
 	}
 
 	.story-list li + li {
-		margin-top: 1.25rem;
+		margin-top: 1rem;
 	}
 
-	.story-link {
-		display: inline-flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0.25rem 0.5rem;
+	.story-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 1.25rem 1.5rem;
+		background: var(--color-cream-50);
+		border: 1.5px solid var(--color-cream-400);
+		border-radius: 6px;
 		font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', sans-serif;
-		color: var(--color-brand);
-		text-decoration: underline;
-		text-decoration-thickness: 1.5px;
-		text-underline-offset: 0.2em;
-		font-size: 1.375rem;
-		line-height: 1.4;
+		color: var(--color-cream-900);
+		text-decoration: none;
+		line-height: 1.3;
+		transition:
+			border-color 0.15s,
+			box-shadow 0.15s;
 	}
 
-	.story-link:hover {
-		color: var(--color-accent-red);
-		text-decoration-thickness: 2.5px;
+	.story-card:hover {
+		border-color: var(--color-brand);
+		box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
 	}
 
-	.story-link:focus-visible {
+	.story-card:focus-visible {
 		outline: 2px solid var(--color-brand);
 		outline-offset: 3px;
-		border-radius: 2px;
 	}
 
-	.story-link__title {
+	.story-card__title {
+		font-size: 1rem;
 		font-weight: 700;
+		color: var(--color-brand);
+	}
+
+	.story-card__dek {
+		font-size: 1.375rem;
+		font-weight: 600;
+	}
+
+	.story-card:hover .story-card__dek {
+		color: var(--color-accent-red);
 	}
 
 	.visually-hidden {
