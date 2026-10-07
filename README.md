@@ -1,22 +1,70 @@
 # GRAFFU — home
 
-The homepage for [graffu.com](https://graffu.com): a list of visual data stories. Each story is a separate app with its own repo and its own Netlify site. This site links to them and serves them under its domain through Netlify proxy rules.
+The homepage for [graffu.com](https://graffu.com).
+
+- [General](#general): what this site is and how it fits together
+- [For Editors](#for-editors): maintaining the story list in the Google Sheet
+- [For Developers](#for-developers): running, building and deploying the site, and adding new stories
+
+---
+
+# General
+
+graffu.com is a collection of visual data stories. This repo is the **homepage**: the list of stories you see at `graffu.com`.
+
+Each story is a separate project with its own code and its own hosting. The homepage links to them and makes them appear under the graffu.com address, so visitors see `graffu.com/top-39/` rather than a separate site.
+
+```
+graffu.com                    ──► Homepage (this repo)
+graffu.com/top-39/...         ──► Top 39 story (its own site)
+graffu.com/club-v-country/... ──► Club vs Country story (its own site)
+```
+
+The list of stories on the homepage comes from a Google Sheet, so editors can change it without touching any code.
+
+---
+
+# For Editors
+
+## Editing the story list
+
+The story list lives in the [stories Google Sheet](https://docs.google.com/spreadsheets/d/1J8LW0B3oyUdH1qU1R2Ul2YnUOp7Satk6v1JYdzZBNow). Each row is one story, and stories appear on the homepage in the same order as the rows.
+
+| Column     | What to put in it                                                              |
+| ---------- | ------------------------------------------------------------------------------ |
+| `url`      | Where the story lives. A graffu.com path like `/top-39`, or a full web address |
+| `title`    | The card's title, e.g. `Project 100:`                                          |
+| `subtitle` | The card's subtitle, e.g. `Club vs Country`                                    |
+| `image`    | Not used yet. Leave it as it is                                                |
+| `show`     | `1` to show the story on the homepage. Anything else (or blank) hides it       |
+
+To hide a story without deleting its row, change `show` from `1` to `0`.
+
+## When changes go live
+
+The homepage picks up changes from the sheet **once a day, at 7am Eastern**. After that, the site takes a few minutes to rebuild. If nothing in the sheet changed, nothing happens.
+
+Need a change sooner? Anyone with access to the GitHub repo can start it by hand: go to the **Actions** tab, choose **Fetch Google data**, and click **Run workflow**. Otherwise, ask a developer.
+
+## Adding a new story
+
+A developer first has to set up the story's hosting (see [Adding a new story](#adding-a-new-story-1) below). Once they give you its path, for example `/my-story`:
+
+1. Add a row to the sheet with `url` set to `/my-story`, a `title` and a `subtitle`.
+2. Set `show` to `1`.
+3. Wait for the next daily update, or run it by hand as described above.
+
+## Things to keep in mind
+
+- **Keep the sheet's sharing set to "Anyone with the link: Viewer".** The site needs to be able to read it, but anything in the sheet goes live automatically, so it must not be editable by the public.
+- **Use paths like `/my-story` for graffu.com stories**, not the full `https://graffu.com/my-story` address.
+- **Check the homepage after an update.** A typo in `url` gives a broken link, and nothing catches it automatically.
+
+---
+
+# For Developers
 
 Built with SvelteKit (Svelte 5), Tailwind CSS 4 and `@sveltejs/adapter-static`. Every page is prerendered to static HTML.
-
-## How it works
-
-```
-Browser ──► graffu.com                    ──► Home site (this repo)
-Browser ──► graffu.com/top-39/...         ──► Home site proxies to ──► top-39.netlify.app
-Browser ──► graffu.com/club-v-country/... ──► Home site proxies to ──► club-v-country.netlify.app
-```
-
-- `graffu.com` (primary) and `www.graffu.com` (redirects to primary) are attached to **this** Netlify site.
-- Each story is its own Netlify site, deployed from its own GitHub repo, and reachable at its default `*.netlify.app` address. No custom domain is attached to the story sites.
-- This site's [netlify.toml](netlify.toml) holds a **proxy rewrite** (status `200`) for each story. Netlify fetches the content from the story site behind the scenes, so the address bar stays on `graffu.com/story-name/...`. A `301`/`302` would send visitors to the `netlify.app` URL instead, so don't change the status code.
-
-`netlify.toml` is the list of which paths map to which Netlify sites.
 
 ## Getting started
 
@@ -56,23 +104,21 @@ static/                 Fonts, robots.txt, sitemap.xml, OG image
 netlify.toml            Build settings and story proxy rules
 ```
 
-## Managing stories
+## Story data pipeline
 
-The story list lives in a [Google Sheet](https://docs.google.com/spreadsheets/d/1J8LW0B3oyUdH1qU1R2Ul2YnUOp7Satk6v1JYdzZBNow). Each row has these columns:
+`npm run gdoc` downloads the [stories sheet](https://docs.google.com/spreadsheets/d/1J8LW0B3oyUdH1qU1R2Ul2YnUOp7Satk6v1JYdzZBNow) as CSV, keeps the rows where `show` is `1`, and writes them to `src/data/stories.json`. The sheet must be viewable by anyone with the link.
 
-| Column     | Meaning                                                      |
-| ---------- | ------------------------------------------------------------ |
-| `url`      | Link to the story. A site path like `/top-39`, or a full URL |
-| `title`    | Card title, e.g. `Project 100:`                              |
-| `subtitle` | Card subtitle, e.g. `Club vs Country`                        |
-| `image`    | Reserved for a card image (currently unused)                 |
-| `show`     | `1` to show the story. Any other value hides it              |
-
-`npm run gdoc` downloads the sheet as CSV, keeps the rows where `show` is `1`, and writes them to `src/data/stories.json`. The sheet must be viewable by anyone with the link.
-
-A GitHub Action ([.github/workflows/gdoc.yml](.github/workflows/gdoc.yml)) runs this every day at 7am Eastern. When the data has changed, it commits the new `stories.json` to `main`, which starts a Netlify deploy. You can also run it by hand from the Actions tab.
+A GitHub Action ([.github/workflows/gdoc.yml](.github/workflows/gdoc.yml)) runs this every day at 7am Eastern. When the data has changed, it commits the new `stories.json` to `main`, which starts a Netlify deploy. It can also be run by hand from the Actions tab.
 
 `google.config.js` can list more files. An entry with a `gid` is fetched as a sheet tab; an entry without one is fetched as a Google Doc and parsed with [ArchieML](http://archieml.org/).
+
+## How the proxy works
+
+- `graffu.com` (primary) and `www.graffu.com` (redirects to primary) are attached to **this** Netlify site.
+- Each story is its own Netlify site, deployed from its own GitHub repo, and reachable at its default `*.netlify.app` address. No custom domain is attached to the story sites.
+- This site's [netlify.toml](netlify.toml) holds a **proxy rewrite** (status `200`) for each story. Netlify fetches the content from the story site behind the scenes, so the address bar stays on `graffu.com/story-name/...`. A `301`/`302` would send visitors to the `netlify.app` URL instead, so don't change the status code.
+
+`netlify.toml` is the list of which paths map to which Netlify sites.
 
 ## Requirements for each story
 
@@ -110,9 +156,9 @@ A story proxied under a subfolder must work when served from `/story-name/`. In 
 
    `*` is a wildcard and `:splat` is replaced with whatever it matched, so `graffu.com/my-story/about/` is fetched from `https://my-story.netlify.app/about/`. The `/my-story` prefix is stripped before the request reaches the story site. Rules match top to bottom and the first match wins, so keep story rules above any catch-all rule.
 
-4. Add a row to the Google Sheet with `url` set to `/my-story` and `show` set to `1`, then run `npm run gdoc` (or wait for the daily run).
-5. Add the story's URL to `static/sitemap.xml`. The sitemap is kept by hand.
-6. Test in a private window: load `graffu.com/my-story/` and `graffu.com/my-story` (no trailing slash), click through several pages, hard-refresh a deep link, and watch the network tab for any request that goes to `graffu.com/...` without the prefix or to `netlify.app`.
+4. Add the story's URL to `static/sitemap.xml`. The sitemap is kept by hand.
+5. Test in a private window: load `graffu.com/my-story/` and `graffu.com/my-story` (no trailing slash), click through several pages, hard-refresh a deep link, and watch the network tab for any request that goes to `graffu.com/...` without the prefix or to `netlify.app`.
+6. Give the editors the path (`/my-story`) so they can add it to the Google Sheet (see [For Editors](#adding-a-new-story)).
 
 ## Deployment
 
