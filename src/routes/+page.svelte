@@ -3,14 +3,6 @@
 	import type { Pathname } from '$app/types';
 	import { SITE_URL } from '$lib/constants.js';
 	import stories from '../data/stories.json';
-	import { screenshotFor } from './screenshots';
-
-	let { data } = $props();
-
-	// Prefer the sheet's image; otherwise use the linked page's og:image, fetched at build time.
-	function imageFor(story: (typeof stories)[number]): string | undefined {
-		return screenshotFor(story.image) ?? data.fallbackImages[story.url];
-	}
 
 	// Site-relative URLs ("/club-vs-country") get the base path; anything else is left as-is.
 	function hrefFor(url: string): string {
@@ -53,117 +45,74 @@
 	{@html `<script type="application/ld+json">${jsonLd}</scr` + `ipt>`}
 </svelte:head>
 
-<div class="snap-container">
-
-	{#each stories as story, i (story.url)}
-		{@const img = imageFor(story)}
-		<div class="page page--story">
-			<!-- URLs come from the stories sheet and may point off-site -->
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a href={hrefFor(story.url)} class="story-card">
-				{#if img}
-					<img src={img} alt={story.title} class="story-card__img" />
-				{/if}
-				<div class="story-card__body">
-					<svelte:element this={i === 0 ? 'h1' : 'h2'} class="story-card__title">{story.title}</svelte:element>
-					<p class="story-card__dek">{story.subtitle}</p>
-				</div>
-			</a>
-		</div>
-	{/each}
-
-</div>
+<main class="story-list">
+	<h1 class="visually-hidden">Stories</h1>
+	<ul>
+		{#each stories as story (story.url)}
+			<li>
+				<!-- URLs come from the stories sheet and may point off-site -->
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+				<a href={hrefFor(story.url)} class="story-link">
+					<span class="story-link__title">{story.title}</span>
+					<span class="story-link__dek">{story.subtitle}</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
+</main>
 
 <style>
-	.snap-container {
-		position: fixed;
-		top: 52px;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		overflow-y: scroll;
-		scroll-snap-type: y mandatory;
+	.story-list {
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 2rem 1.5rem 4rem;
 	}
 
-	.page {
-		scroll-snap-align: start;
-		height: calc(100vh - 52px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 3.5rem 1rem 1rem;
-		box-sizing: border-box;
+	.story-list ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 
-	.page--intro  { background: #e8e6e0; }
-	.page--story  { background: #f5f4f0; }
-	.page--next   { background: #edecea; }
+	.story-list li + li {
+		margin-top: 1.25rem;
+	}
 
-	.story-card {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		height: 100%;
-		border: 1.5px solid #d0cec9;
-		border-radius: 12px;
+	.story-link {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.5rem;
+		font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', sans-serif;
+		color: var(--color-brand);
+		text-decoration: underline;
+		text-decoration-thickness: 1.5px;
+		text-underline-offset: 0.2em;
+		font-size: 1.375rem;
+		line-height: 1.4;
+	}
+
+	.story-link:hover {
+		color: var(--color-accent-red);
+		text-decoration-thickness: 2.5px;
+	}
+
+	.story-link:focus-visible {
+		outline: 2px solid var(--color-brand);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	.story-link__title {
+		font-weight: 700;
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
 		overflow: hidden;
-		text-decoration: none;
-		color: inherit;
-		background: #fff;
-		transition: border-color 0.15s, box-shadow 0.15s;
-	}
-
-	.story-card:hover {
-		border-color: #aaa;
-		box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-	}
-
-	.story-card__img {
-		display: block;
-		width: 100%;
-		flex: 1 1 0;
-		min-height: 0;
-		object-fit: cover;
-	}
-
-	.story-card__body {
-		display: flex;
-		gap: 2rem;
-		align-items: flex-start;
-		padding: 1.25rem 1.5rem 1.5rem;
-	}
-
-	.story-card__title {
-		flex: 0 0 auto;
-		font-size: clamp(3.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		margin: 0;
-		color: #111;
-	}
-
-	.story-card__dek {
-		flex: 1 1 0;
-		font-size: 1.25rem;
-		line-height: 1.6;
-		color: #555;
-		margin: 0;
-	}
-
-	@media (max-width: 600px) {
-		.story-card__body {
-			flex-direction: column;
-			gap: 0.75rem;
-			padding: 1rem 1.25rem 1.25rem;
-		}
-
-		.story-card__title {
-			font-size: 2rem;
-		}
-
-		.story-card__dek {
-			font-size: 1rem;
-			line-height: 1.5;
-		}
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
 	}
 </style>
