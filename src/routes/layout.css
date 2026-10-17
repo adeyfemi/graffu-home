@@ -18,7 +18,46 @@ body {
 	font-family: var(--font-serif);
 	line-height: 1.65;
 	margin: 0;
-	padding-top: var(--nav-height);
+	background: var(--page-background);
+	color: var(--page-ink);
+	transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+:root {
+	color-scheme: light;
+	--page-background: #faf8f2;
+	--page-ink: #17231f;
+	--page-muted: #59635f;
+	--page-line: #d9ddd4;
+	--page-card: #fffefb;
+	--page-soft: #ecf3eb;
+	--page-accent: #087e59;
+	--page-accent-strong: #075e46;
+	--page-highlight: #e9ff79;
+	--page-shadow: 0 22px 55px rgb(17 35 26 / 0.1);
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--page-background: #111b18;
+	--page-ink: #f4f5ec;
+	--page-muted: #adbdb4;
+	--page-line: #33433b;
+	--page-card: #1b2923;
+	--page-soft: #223b30;
+	--page-accent: #8ce0b4;
+	--page-accent-strong: #b5f3d2;
+	--page-highlight: #d5eb67;
+	--page-shadow: 0 22px 55px rgb(0 0 0 / 0.28);
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+::selection {
+	background: var(--page-highlight);
+	color: #17231f;
 }
 
 code, kbd, samp, pre {
