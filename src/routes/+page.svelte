@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
 	import { SITE_URL } from '$lib/constants.js';
@@ -9,19 +10,46 @@
 	const storyDetails: Record<string, { category: string; description: string; image: string; alt: string }> = {
 		'/top-39/': {
 			category: 'Film & culture',
-			description: 'Explore the numbers behind the films and careers of Black movie actors.',
+			description: 'explore the numbers behind the films of black actors',
 			image: top39Cover,
 			alt: 'Illustrated artwork from the Top 39 visual story'
 		},
 		'/club-v-country/': {
 			category: 'Football & the world',
-			description: 'Follow the relationship between national teams and the clubs their players call home.',
+			description: 'Follow the movement of football players between national and club teams',
 			image: clubCover,
 			alt: 'World map and data visuals from the Club vs Country story'
 		}
 	};
 
 	const visibleStories = stories.filter((story) => story.show === '1');
+	let theme = $state<'light' | 'dark'>('light');
+
+	onMount(() => {
+		theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+		const preference = window.matchMedia('(prefers-color-scheme: dark)');
+		const followSystem = () => {
+			try {
+				if (localStorage.getItem('graffu-theme')) return;
+			} catch {
+				// Follow the system theme when storage is unavailable.
+			}
+			theme = preference.matches ? 'dark' : 'light';
+			document.documentElement.dataset.theme = theme;
+		};
+		preference.addEventListener('change', followSystem);
+		return () => preference.removeEventListener('change', followSystem);
+	});
+
+	function toggleTheme() {
+		theme = theme === 'light' ? 'dark' : 'light';
+		document.documentElement.dataset.theme = theme;
+		try {
+			localStorage.setItem('graffu-theme', theme);
+		} catch {
+			// The switch still works if the browser blocks local storage.
+		}
+	}
 
 	function hrefFor(url: string): string {
 		return url.startsWith('/') && !url.startsWith('//') ? resolve(url as Pathname) : url;
@@ -105,14 +133,14 @@
 		</ul>
 	</section>
 
-	<section class="about-section" id="about" aria-labelledby="about-heading">
+	<!-- <section class="about-section" id="about" aria-labelledby="about-heading">
 		<div class="about-mark" aria-hidden="true">✳</div>
 		<div>
 			<p class="eyebrow">A little about us</p>
 			<h2 id="about-heading">Made for the<br /><em>curious mind.</em></h2>
 		</div>
 		<p>GRAFFU is a place for stories told with data, design, and a healthy dose of curiosity. We believe the best way to understand something is to get close enough to explore it.</p>
-	</section>
+	</section> -->
 </main>
 
 <footer class="site-footer">
@@ -120,7 +148,13 @@
 		<a href={resolve('/')} class="footer-brand" aria-label="Graffu home">
 			<span>Graffu<span class="footer-brand-stop">.</span></span>
 		</a>
-		<div class="footer-links"><a href="#stories">Stories</a><a href="#about">About</a><a href="#main-content">Back to top ↑</a></div>
+		<div class="footer-actions">
+			<button class="theme-toggle" type="button" onclick={toggleTheme} aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} aria-pressed={theme === 'dark'}>
+				<span class="theme-icon" aria-hidden="true">{theme === 'light' ? '☾' : '☀'}</span>
+				<span>{theme === 'light' ? 'Dark mode' : 'Light mode'}</span>
+			</button>
+			<a href="#main-content">Back to top ↑</a>
+		</div>
 	</div>
 </footer>
 
@@ -161,8 +195,8 @@
 	.story-card:hover .artwork img { transform: scale(1.055); }
 	.artwork-fallback { font: 400 9rem var(--font-display); color: var(--page-ink); }
 	.card-body { padding: 1.2rem 0.25rem 0.25rem; }
-	.card-body h3 { margin: 0 0 0.55rem; font-family: var(--font-serif); font-size: clamp(2.3rem, 3.5vw, 3.8rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
-	.card-description { max-width: 500px; margin: 0; color: var(--page-muted); font-size: 1.04rem; line-height: 1.45; }
+	.card-body h3 { margin: 0 0 0.55rem; font-family: var(--font-serif); font-size: clamp(1.6rem, 2.35vw, 2.55rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
+	.card-description { margin: 0; color: var(--page-muted); font-size: 0.875rem; line-height: 1.45; white-space: nowrap; }
 	.about-section { scroll-margin-top: 110px; display: grid; grid-template-columns: auto 1.3fr 1fr; align-items: center; gap: clamp(1.5rem, 4vw, 5rem); padding: clamp(2rem, 5vw, 4.5rem); margin-bottom: clamp(4rem, 8vw, 7rem); border-radius: 18px; background: var(--page-highlight); color: #17231f; }
 	.about-mark { font-size: clamp(5rem, 10vw, 10rem); line-height: 0.8; }
 	.about-section .eyebrow { color: #075e46; }
@@ -173,9 +207,15 @@
 	.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 115px; }
 	.footer-brand { display: inline-flex; align-items: center; font: 800 2rem/1 system-ui, sans-serif; letter-spacing: -0.06em; text-decoration: none; white-space: nowrap; }
 	.footer-brand-stop { color: var(--page-accent); }
-	.footer-links { display: flex; gap: 1.5rem; font: 700 0.8rem system-ui, sans-serif; }
-	.footer-links a { text-decoration: none; }.footer-links a:hover { color: var(--page-accent); }
+	.footer-actions { display: flex; align-items: center; gap: 1.5rem; font: 700 0.8rem system-ui, sans-serif; }
+	.footer-actions a { text-decoration: none; }
+	.footer-actions a:hover { color: var(--page-accent); }
+	.theme-toggle { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0; border: 0; background: none; color: var(--page-ink); font: inherit; cursor: pointer; }
+	.theme-icon { font-size: 1.35rem; line-height: 1; transition: transform 0.25s ease; }
+	.theme-toggle:hover .theme-icon { transform: rotate(-22deg); }
+	.theme-toggle:focus-visible, .footer-actions a:focus-visible { outline: 3px solid var(--page-accent); outline-offset: 4px; }
 	@media (max-width: 1000px) { .hero-inner { grid-template-columns: 1fr; }.hero-note { display: none; }.hero h1 { max-width: 800px; }.about-section { grid-template-columns: auto 1fr; }.about-section > p { grid-column: 2; } }
-	@media (max-width: 760px) { .hero, .stories-section, .about-section, .footer-inner { width: min(100% - 2rem, 1320px); }.hero { padding-block: 4rem 5rem; }.hero h1 { font-size: clamp(3.1rem, 10vw, 5rem); }.hero-bottom { display: block; }.text-link { margin-top: 1.5rem; }.story-grid { grid-template-columns: 1fr; }.artwork { height: clamp(260px, 63vw, 430px); }.about-section { grid-template-columns: 1fr; }.about-mark { font-size: 5rem; }.about-section > p { grid-column: auto; }.footer-inner { align-items: flex-start; flex-direction: column; gap: 1rem; padding-block: 2rem; }.footer-links { flex-wrap: wrap; } }
-	@media (max-width: 440px) { .hero h1 { font-size: 3.05rem; }.highlight { white-space: normal; }.card-body h3 { font-size: 2.6rem; } }
+	@media (max-width: 1280px) { .card-description { white-space: normal; } }
+	@media (max-width: 760px) { .hero, .stories-section, .about-section, .footer-inner { width: min(100% - 2rem, 1320px); }.hero { padding-block: 4rem 5rem; }.hero h1 { font-size: clamp(3.1rem, 10vw, 5rem); }.hero-bottom { display: block; }.text-link { margin-top: 1.5rem; }.story-grid { grid-template-columns: 1fr; }.artwork { height: clamp(260px, 63vw, 430px); }.about-section { grid-template-columns: 1fr; }.about-mark { font-size: 5rem; }.about-section > p { grid-column: auto; }.footer-inner { align-items: flex-start; flex-direction: column; gap: 1rem; padding-block: 2rem; }.footer-actions { flex-wrap: wrap; } }
+	@media (max-width: 440px) { .hero h1 { font-size: 3.05rem; }.highlight { white-space: normal; }.card-body h3 { font-size: 1.75rem; } }
 </style>

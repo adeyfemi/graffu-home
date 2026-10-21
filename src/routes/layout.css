@@ -18,6 +18,7 @@ body {
 	font-family: var(--font-serif);
 	line-height: 1.65;
 	margin: 0;
+	padding-top: 80px;
 	background: var(--page-background);
 	color: var(--page-ink);
 	transition: background-color 0.25s ease, color 0.25s ease;
@@ -35,6 +36,9 @@ body {
 	--page-accent-strong: #075e46;
 	--page-highlight: #e9ff79;
 	--page-shadow: 0 22px 55px rgb(17 35 26 / 0.1);
+	--header-background: #fefcf8;
+	--header-wordmark: #000;
+	--header-tagline: oklch(0.373 0.034 259.733);
 }
 
 :root[data-theme='dark'] {
@@ -49,6 +53,9 @@ body {
 	--page-accent-strong: #b5f3d2;
 	--page-highlight: #d5eb67;
 	--page-shadow: 0 22px 55px rgb(0 0 0 / 0.28);
+	--header-background: #111b18;
+	--header-wordmark: #f4f5ec;
+	--header-tagline: #f4f5ec;
 }
 
 html {
