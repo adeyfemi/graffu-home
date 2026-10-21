@@ -29,6 +29,7 @@ body {
 	--page-background: #faf8f2;
 	--page-ink: #17231f;
 	--page-muted: #59635f;
+	--story-description-ink: #000;
 	--page-line: #d9ddd4;
 	--page-card: #fffefb;
 	--page-soft: #ecf3eb;
@@ -46,6 +47,7 @@ body {
 	--page-background: #111b18;
 	--page-ink: #f4f5ec;
 	--page-muted: #adbdb4;
+	--story-description-ink: #f4f5ec;
 	--page-line: #33433b;
 	--page-card: #1b2923;
 	--page-soft: #223b30;

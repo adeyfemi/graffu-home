@@ -10,7 +10,7 @@
 	const storyDetails: Record<string, { category: string; description: string; image: string; alt: string }> = {
 		'/top-39/': {
 			category: 'Film & culture',
-			description: 'explore the numbers behind the films of black actors',
+			description: 'Explore the numbers behind the films of black actors',
 			image: top39Cover,
 			alt: 'Illustrated artwork from the Top 39 visual story'
 		},
@@ -145,15 +145,11 @@
 
 <footer class="site-footer">
 	<div class="footer-inner">
-		<a href={resolve('/')} class="footer-brand" aria-label="Graffu home">
-			<span>Graffu<span class="footer-brand-stop">.</span></span>
-		</a>
 		<div class="footer-actions">
 			<button class="theme-toggle" type="button" onclick={toggleTheme} aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} aria-pressed={theme === 'dark'}>
 				<span class="theme-icon" aria-hidden="true">{theme === 'light' ? '☾' : '☀'}</span>
 				<span>{theme === 'light' ? 'Dark mode' : 'Light mode'}</span>
 			</button>
-			<a href="#main-content">Back to top ↑</a>
 		</div>
 	</div>
 </footer>
@@ -196,7 +192,7 @@
 	.artwork-fallback { font: 400 9rem var(--font-display); color: var(--page-ink); }
 	.card-body { padding: 1.2rem 0.25rem 0.25rem; }
 	.card-body h3 { margin: 0 0 0.55rem; font-family: var(--font-serif); font-size: clamp(1.6rem, 2.35vw, 2.55rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
-	.card-description { margin: 0; color: var(--page-muted); font-size: 0.875rem; line-height: 1.45; white-space: nowrap; }
+	.card-description { margin: 0; color: var(--story-description-ink); font-size: 0.875rem; line-height: 1.45; white-space: nowrap; }
 	.about-section { scroll-margin-top: 110px; display: grid; grid-template-columns: auto 1.3fr 1fr; align-items: center; gap: clamp(1.5rem, 4vw, 5rem); padding: clamp(2rem, 5vw, 4.5rem); margin-bottom: clamp(4rem, 8vw, 7rem); border-radius: 18px; background: var(--page-highlight); color: #17231f; }
 	.about-mark { font-size: clamp(5rem, 10vw, 10rem); line-height: 0.8; }
 	.about-section .eyebrow { color: #075e46; }
@@ -204,18 +200,14 @@
 	.about-section h2 em { font-family: var(--font-serif); font-weight: 400; }
 	.about-section > p { max-width: 390px; margin: 0; font-size: 1.14rem; line-height: 1.55; }
 	.site-footer { border-top: 1px solid var(--page-line); }
-	.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 115px; }
-	.footer-brand { display: inline-flex; align-items: center; font: 800 2rem/1 system-ui, sans-serif; letter-spacing: -0.06em; text-decoration: none; white-space: nowrap; }
-	.footer-brand-stop { color: var(--page-accent); }
-	.footer-actions { display: flex; align-items: center; gap: 1.5rem; font: 700 0.8rem system-ui, sans-serif; }
-	.footer-actions a { text-decoration: none; }
-	.footer-actions a:hover { color: var(--page-accent); }
+	.footer-inner { display: flex; align-items: center; justify-content: flex-end; min-height: 115px; }
+	.footer-actions { display: flex; align-items: center; font: 700 0.8rem system-ui, sans-serif; }
 	.theme-toggle { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0; border: 0; background: none; color: var(--page-ink); font: inherit; cursor: pointer; }
 	.theme-icon { font-size: 1.35rem; line-height: 1; transition: transform 0.25s ease; }
 	.theme-toggle:hover .theme-icon { transform: rotate(-22deg); }
-	.theme-toggle:focus-visible, .footer-actions a:focus-visible { outline: 3px solid var(--page-accent); outline-offset: 4px; }
+	.theme-toggle:focus-visible { outline: 3px solid var(--page-accent); outline-offset: 4px; }
 	@media (max-width: 1000px) { .hero-inner { grid-template-columns: 1fr; }.hero-note { display: none; }.hero h1 { max-width: 800px; }.about-section { grid-template-columns: auto 1fr; }.about-section > p { grid-column: 2; } }
 	@media (max-width: 1280px) { .card-description { white-space: normal; } }
-	@media (max-width: 760px) { .hero, .stories-section, .about-section, .footer-inner { width: min(100% - 2rem, 1320px); }.hero { padding-block: 4rem 5rem; }.hero h1 { font-size: clamp(3.1rem, 10vw, 5rem); }.hero-bottom { display: block; }.text-link { margin-top: 1.5rem; }.story-grid { grid-template-columns: 1fr; }.artwork { height: clamp(260px, 63vw, 430px); }.about-section { grid-template-columns: 1fr; }.about-mark { font-size: 5rem; }.about-section > p { grid-column: auto; }.footer-inner { align-items: flex-start; flex-direction: column; gap: 1rem; padding-block: 2rem; }.footer-actions { flex-wrap: wrap; } }
+	@media (max-width: 760px) { .hero, .stories-section, .about-section, .footer-inner { width: min(100% - 2rem, 1320px); }.hero { padding-block: 4rem 5rem; }.hero h1 { font-size: clamp(3.1rem, 10vw, 5rem); }.hero-bottom { display: block; }.text-link { margin-top: 1.5rem; }.story-grid { grid-template-columns: 1fr; }.artwork { height: clamp(260px, 63vw, 430px); }.about-section { grid-template-columns: 1fr; }.about-mark { font-size: 5rem; }.about-section > p { grid-column: auto; } }
 	@media (max-width: 440px) { .hero h1 { font-size: 3.05rem; }.highlight { white-space: normal; }.card-body h3 { font-size: 1.75rem; } }
 </style>
