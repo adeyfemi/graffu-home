@@ -1,6 +1,5 @@
 <script lang="ts">
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.png';
 	import { base, resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 
@@ -64,7 +63,6 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
 	<!-- Preload critical webfonts -->
 	<link rel="preload" as="font" href={tayFlapjackWoff2} type="font/woff2" crossorigin="anonymous" />
 	<link rel="preload" as="font" href={sourceSerif400Woff2} type="font/woff2" crossorigin="anonymous" />
